@@ -184,10 +184,26 @@ void redraw(player *character, char **map, int x, int y)
 
 int main(int argc, char **argv)
 {
-    int x, y;
+    const int DEFAULT_SIZE = 10;
 
-    x = atoi(argv[1]);
-    y = atoi(argv[2]);
+    int x = 0;
+    int y = 0;
+
+    if(argv[1] != NULL)
+    {
+        x = atoi(argv[1]);
+        y = atoi(argv[2]);
+    }
+    else
+    {
+        
+        //x = atoi(DEFAULT_SIZE);
+        //y = atoi(DEFAULT_SIZE);
+        x = DEFAULT_SIZE;
+        y = DEFAULT_SIZE;
+
+    }
+
 
     printf("your entered (x, y): %d %d\n", x, y);
 
