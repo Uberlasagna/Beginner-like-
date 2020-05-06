@@ -18,6 +18,8 @@ player* initPlayer(char **map, int x, int y);
 
 player* destroyPlayer(player *character);
 
+void character_move(player *character, char **map, int move_x, int move_y, int size_x, int size_y);
+
 void redraw(player *character, char **map, int x, int y);
 
 #endif

@@ -3,6 +3,9 @@
 #include "functions.h"
 #include <ncurses.h>
 
+#define EMPTY_SPACE '.' 
+
+
 char** mapGen(int x, int y)
 {
     int i, j;
@@ -18,7 +21,7 @@ char** mapGen(int x, int y)
     for (i = 0; i < y; i++)
     {
         for (j = 0; j < x; j++)
-          map[i][j] = '.';
+          map[i][j] = EMPTY_SPACE;
     }
 
     return map;
@@ -83,6 +86,39 @@ player* destroyPlayer(player *character)
     return NULL;
 }
 
+void character_move(player *character, char **map, int move_x, int move_y, int size_x, int size_y)
+{
+   
+    // erase character from current tile
+    map[character->x][character->y] = EMPTY_SPACE;
+
+    // calculate next position
+    character->x += move_x;
+    character->y += move_y;
+
+    //wrap around if out of bounds
+    if((character->x) >= size_x )
+    {
+        character->x -= size_x;
+    }
+    else if((character->x) < 0 )
+    {
+        character->x += size_x;
+    } 
+
+    if((character->y) >= size_y )
+    {
+        character->y -= size_y;
+    }else if((character->y) < 0 )
+    {
+        character->y += size_y;
+    } 
+
+    //set coordinate to player symbol
+    map[character->x][character->y] = character->symbol;
+    
+}
+
 void redraw(player *character, char **map, int x, int y)
 {
     int exitFlag = 1, ch;
@@ -107,66 +143,30 @@ void redraw(player *character, char **map, int x, int y)
         // check for appropriate command
         if (ch == KEY_LEFT)
         {
-            // erase character from current tile
-            map[character->x][character->y] = '.';
-
-            // calculate next position
-            character->y -= 1;
-            map[character->x][character->y] = character->symbol;
-
-            // update screen
-            clear();
-
-            // reprint the map
-            printMap(map, x, y);
+            character_move(character, map, 0, -1, x, y );
         }
         else if (ch == KEY_RIGHT)
         {
-            // erase character from current tile
-            map[character->x][character->y] = '.';
-
-            // calculate next position
-            character->y += 1;
-            map[character->x][character->y] = character->symbol;
-
-            // update screen
-            clear();
-
-            // reprint the map
-            printMap(map, x, y);
+            character_move(character, map, 0, +1, x ,y );
         }
         else if (ch == KEY_UP)
         {
-            // erase character from current tile
-            map[character->x][character->y] = '.';
-
-            // calculate next position
-            character->x -= 1;
-            map[character->x][character->y] = character->symbol;
-
-            // update screen
-            clear();
-
-            // reprint the map
-            printMap(map, x, y);
+            character_move(character, map, -1 , 0, x, y );
         }
         else if (ch == KEY_DOWN)
         {
-            // erase character from current tile
-            map[character->x][character->y] = '.';
-
-            // calculate next position
-            character->x += 1;
-            map[character->x][character->y] = character->symbol;
-
-            // update screen
-            clear();
-
-            // reprint the map
-            printMap(map, x, y);
+            character_move(character, map, +1 , 0, x, y );
         }
         else if (ch == KEY_BACKSPACE) // Exit case (pressing backspace)
-          exitFlag = 0;
+        {
+            exitFlag = 0;
+        }
+
+        // update screen
+        clear();
+
+        // reprint the map
+        printMap(map, x, y);
     }
 
     // clear screen
@@ -196,12 +196,8 @@ int main(int argc, char **argv)
     }
     else
     {
-        
-        //x = atoi(DEFAULT_SIZE);
-        //y = atoi(DEFAULT_SIZE);
         x = DEFAULT_SIZE;
         y = DEFAULT_SIZE;
-
     }
 
 
